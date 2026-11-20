@@ -31,6 +31,18 @@ it('returns sample report matching the contract', function (): void {
                 'suggestions',
                 'improved_cv',
                 'translated_cv',
+                'structured_cv' => [
+                    'full_name',
+                    'job_title',
+                    'email',
+                    'phone',
+                    'location',
+                    'summary',
+                    'experience',
+                    'education',
+                    'skills',
+                    'languages',
+                ],
                 'expires_at',
                 'created_at',
             ],
@@ -58,7 +70,19 @@ it('analyzes cv text with gemini and returns 201', function (): void {
         'weaknesses' => ['Generic summary', 'Passive verbs', 'Missing skills section'],
         'suggestions' => ['Add target title', 'Use action verbs', 'Group skills'],
         'improved_cv' => 'Improved English CV content',
-        'translated_cv' => 'ប្រវត្តិរូបសង្ខេបជាភាសាខ្មែរ',
+        'translated_cv' => '',
+        'structured_cv' => [
+            'full_name' => 'Sokha Chan',
+            'job_title' => 'Software Developer',
+            'email' => 'sokha@example.com',
+            'phone' => '+855 12 000 000',
+            'location' => 'Phnom Penh',
+            'summary' => 'Experienced developer.',
+            'experience' => [],
+            'education' => [],
+            'skills' => ['Laravel', 'Vue.js'],
+            'languages' => ['Khmer', 'English'],
+        ],
     ];
 
     Http::fake([
@@ -82,7 +106,8 @@ it('analyzes cv text with gemini and returns 201', function (): void {
         ->assertJsonPath('data.status', 'COMPLETED')
         ->assertJsonPath('data.score', 78)
         ->assertJsonPath('data.label', 'Good')
-        ->assertJsonPath('data.improved_cv', 'Improved English CV content');
+        ->assertJsonPath('data.improved_cv', 'Improved English CV content')
+        ->assertJsonPath('data.structured_cv.full_name', 'Sokha Chan');
 
     $token = $response->json('data.token');
 

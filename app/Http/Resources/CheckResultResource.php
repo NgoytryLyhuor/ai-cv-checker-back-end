@@ -32,6 +32,7 @@ class CheckResultResource extends JsonResource
             'suggestions' => $result['suggestions'] ?? [],
             'improved_cv' => $result['improved_cv'] ?? null,
             'translated_cv' => $result['translated_cv'] ?? null,
+            'structured_cv' => $result['structured_cv'] ?? null,
             'error_message' => $this->error_message,
             'expires_at' => $this->expires_at?->toIso8601ZuluString(),
             'created_at' => $this->created_at?->toIso8601ZuluString(),
