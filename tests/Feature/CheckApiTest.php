@@ -94,6 +94,7 @@ it('analyzes cv text with gemini and returns 201', function (): void {
 
 it('retries once on transient gemini error and marks FAILED if both fail', function (): void {
     config()->set('services.gemini.key', 'test-key');
+    config()->set('services.gemini.fallback_models', []);
 
     Http::fake([
         'generativelanguage.googleapis.com/*' => Http::response(['error' => 'rate limited'], 429),

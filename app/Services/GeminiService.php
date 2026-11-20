@@ -32,61 +32,72 @@ class GeminiService
     public function analyze(string $cvText, CheckService $service): array
     {
         $apiKey = (string) config('services.gemini.key');
-        $model = (string) config('services.gemini.model', 'gemini-2.5-flash');
+        $primaryModel = (string) config('services.gemini.model', 'gemini-3.8-flash');
+        /** @var list<string> $fallbacks */
+        $fallbacks = (array) config('services.gemini.fallback_models', []);
+        $models = array_values(array_unique(array_filter([$primaryModel, ...$fallbacks])));
 
         if ($apiKey === '') {
             throw new RuntimeException('Gemini API key is not configured.');
+        }
+
+        if (function_exists('set_time_limit')) {
+            @set_time_limit(90);
         }
 
         $systemInstruction = $this->buildSystemInstruction($service);
         $userContent = "Service: {$service->value}\n\n<CV_TEXT>\n{$cvText}\n</CV_TEXT>";
 
         $lastError = null;
-        for ($attempt = 1; $attempt <= 2; $attempt++) {
-            try {
-                $response = Http::withHeaders([
-                    'x-goog-api-key' => $apiKey,
-                ])->timeout(60)->post(
-                    "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent",
-                    [
-                        'systemInstruction' => [
-                            'parts' => [['text' => $systemInstruction]],
-                        ],
-                        'contents' => [
-                            ['role' => 'user', 'parts' => [['text' => $userContent]]],
-                        ],
-                        'generationConfig' => [
-                            'temperature' => 0.2,
-                            'responseMimeType' => 'application/json',
-                        ],
-                    ]
-                );
+        foreach ($models as $modelIndex => $model) {
+            $maxAttempts = ($modelIndex === 0 && count($models) === 1) ? 2 : 1;
+            for ($attempt = 1; $attempt <= $maxAttempts; $attempt++) {
+                try {
+                    $response = Http::withHeaders([
+                        'x-goog-api-key' => $apiKey,
+                    ])->timeout(15)->post(
+                        "https://generativelanguage.googleapis.com/v1beta/models/{$model}:generateContent",
+                        [
+                            'systemInstruction' => [
+                                'parts' => [['text' => $systemInstruction]],
+                            ],
+                            'contents' => [
+                                ['role' => 'user', 'parts' => [['text' => $userContent]]],
+                            ],
+                            'generationConfig' => [
+                                'temperature' => 0.2,
+                                'responseMimeType' => 'application/json',
+                            ],
+                        ]
+                    );
 
-                if (! $response->successful()) {
-                    $lastError = new RuntimeException("Gemini API returned HTTP {$response->status()}.");
-                    if ($response->status() === 429 || $response->serverError()) {
+                    if (! $response->successful()) {
+                        $lastError = new RuntimeException("Gemini API ({$model}) returned HTTP {$response->status()}.");
+                        if ($response->status() === 429 || $response->serverError()) {
+                            continue;
+                        }
+
+                        break;
+                    }
+
+                    $raw = $response->json('candidates.0.content.parts.0.text');
+                    if (! is_string($raw) || trim($raw) === '') {
+                        $lastError = new RuntimeException("Gemini ({$model}) returned an empty response.");
+
                         continue;
                     }
-                    throw $lastError;
+
+                    $decoded = json_decode($raw, true);
+                    if (! is_array($decoded)) {
+                        $lastError = new RuntimeException("Gemini ({$model}) returned invalid JSON.");
+
+                        continue;
+                    }
+
+                    return $this->validateAndNormalize($decoded);
+                } catch (ConnectionException $e) {
+                    $lastError = new RuntimeException("Connection to Gemini API ({$model}) timed out.", 0, $e);
                 }
-
-                $raw = $response->json('candidates.0.content.parts.0.text');
-                if (! is_string($raw) || trim($raw) === '') {
-                    $lastError = new RuntimeException('Gemini returned an empty response.');
-
-                    continue;
-                }
-
-                $decoded = json_decode($raw, true);
-                if (! is_array($decoded)) {
-                    $lastError = new RuntimeException('Gemini returned invalid JSON.');
-
-                    continue;
-                }
-
-                return $this->validateAndNormalize($decoded);
-            } catch (ConnectionException $e) {
-                $lastError = new RuntimeException('Connection to Gemini API timed out.', 0, $e);
             }
         }
 
