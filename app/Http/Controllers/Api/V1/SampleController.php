@@ -33,13 +33,28 @@ class SampleController extends Controller
                     'Start each bullet with strong action verbs (Built, Reduced, Automated).',
                     'Group technical skills into Languages, Frameworks, and Tools.',
                 ],
-                'improved_cv' => "SOKHA CHAN\nIT Support & Junior Developer\nPhnom Penh, Cambodia | sokha.chan@example.com | +855 12 345 678\n\nPROFESSIONAL SUMMARY\nDetail-oriented IT Graduate with 1+ year of experience in technical support and Laravel web development. Proven ability to resolve 40+ daily user tickets with 95% satisfaction.\n\nEXPERIENCE\nIT Support & Junior Developer — Phnom Penh Fintech Co. (2025 – Present)\n- Resolved 40+ daily hardware, network, and internal portal tickets.\n- Automated daily CSV reconciliation reports using PHP and SQL, saving 4 hours/week.\n\nEDUCATION\nB.Sc. in Computer Science — Royal University of Phnom Penh (2021 – 2025)",
+                'strengths_km' => [
+                    'មានព័ត៌មានទំនាក់ទំនងច្បាស់លាស់ និងប្រវត្តិការងារតាមលំដាប់ត្រឹមត្រូវ។',
+                    'មានសញ្ញាបត្រវិទ្យាសាស្ត្រកុំព្យូទ័រពាក់ព័ន្ធពីសាកលវិទ្យាល័យភូមិន្ទភ្នំពេញ។',
+                    'មានតួលេខបង្ហាញលទ្ធផលការងារជាក់លាក់ (ដោះស្រាយបញ្ហា 40+ ក្នុងមួយថ្ងៃ)។',
+                ],
+                'weaknesses_km' => [
+                    'សេចក្តីសង្ខេបវិជ្ជាជីវៈនៅទូទៅពេក និងខ្វះចំណងជើងការងារគោលដៅ។',
+                    'ចំណុចការងាររៀបរាប់តែភារកិច្ច មិនទាន់បង្ហាញលទ្ធផលសម្រេចបាន។',
+                    'មានកំហុសវេយ្យាករណ៍ និងកាលៈទេសៈពាក្យតិចតួចក្នុងតួនាទីមុនៗ។',
+                ],
+                'suggestions_km' => [
+                    'បន្ថែមសេចក្តីសង្ខេប ២ បន្ទាត់ដែលត្រូវនឹងតួនាទី Junior Backend Developer ឬ IT Support។',
+                    'ចាប់ផ្តើមប្រយោគនីមួយៗដោយកិរិយាស័ព្ទសកម្ម (Built, Reduced, Automated)។',
+                    'បែងចែកជំនាញបច្ចេកទេសជាក្រុម៖ Languages, Frameworks, និង Tools។',
+                ],
+                'improved_cv' => "NGOYTRY LYHUOR\nIT Support & Junior Developer\nPhnom Penh, Cambodia | ngoytry.lyhuor@demo-cv.kh | +855 12 889 412\n\nPROFESSIONAL SUMMARY\nDetail-oriented IT Graduate with 1+ year of experience in technical support and Laravel web development. Proven ability to resolve 40+ daily user tickets with 95% satisfaction.\n\nEXPERIENCE\nIT Support & Junior Developer — Phnom Penh Fintech Co. (2025 – Present)\n- Resolved 40+ daily hardware, network, and internal portal tickets.\n- Automated daily CSV reconciliation reports using PHP and SQL, saving 4 hours/week.\n\nEDUCATION\nB.Sc. in Computer Science — Royal University of Phnom Penh (2021 – 2025)",
                 'translated_cv' => '',
                 'structured_cv' => [
-                    'full_name' => 'Sokha Chan',
+                    'full_name' => 'NGOYTRY LYHUOR',
                     'job_title' => 'IT Support & Junior Developer',
-                    'email' => 'sokha.chan@example.com',
-                    'phone' => '+855 12 345 678',
+                    'email' => 'ngoytry.lyhuor@demo-cv.kh',
+                    'phone' => '+855 12 889 412',
                     'location' => 'Phnom Penh, Cambodia',
                     'summary' => 'Detail-oriented IT Graduate with 1+ year of experience in technical support and Laravel web development. Proven ability to resolve 40+ daily user tickets with 95% user satisfaction.',
                     'experience' => [

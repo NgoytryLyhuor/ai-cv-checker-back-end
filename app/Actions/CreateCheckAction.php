@@ -8,6 +8,7 @@ use App\Enums\CheckService;
 use App\Enums\CheckStatus;
 use App\Models\CheckRequest;
 use App\Services\GeminiService;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Throwable;
 
@@ -43,6 +44,8 @@ class CreateCheckAction
                 'expires_at' => $now->copy()->addDays(7),
             ]);
         } catch (Throwable $e) {
+            Log::warning('CV analysis failed', ['error' => $e->getMessage()]);
+
             return CheckRequest::create([
                 'token' => $token,
                 'service' => $service,
